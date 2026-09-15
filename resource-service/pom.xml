@@ -11,4 +11,17 @@
     <artifactId>resource-service</artifactId>
     <name>resource-service</name>
     <description>resource-service</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-parser-audiovideo-module</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+    </dependencies>
 </project>
