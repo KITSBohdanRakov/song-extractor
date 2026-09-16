@@ -1,13 +1,17 @@
 package io.github.bohdanrakov.services;
 
+import io.github.bohdanrakov.exceptions.MP3FileUnparsableException;
 import io.github.bohdanrakov.models.MP3File;
 import io.github.bohdanrakov.repositories.MP3FileRepository;
+import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.mp3.Mp3Parser;
 import org.apache.tika.sax.BodyContentHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
@@ -18,16 +22,17 @@ import java.util.Arrays;
 public class MP3StorageService {
 
     private final MP3FileRepository mp3FileRepository;
+    private static final Logger logger = LoggerFactory.getLogger(MP3StorageService.class);
 
     public MP3StorageService(MP3FileRepository mp3FileRepository) {
         this.mp3FileRepository = mp3FileRepository;
     }
 
     public Long storeMP3File(byte[] mp3content) {
-        MP3File mp3File = new MP3File();
-        mp3File.setByteContent(mp3content);
-        MP3File savedMP3File = mp3FileRepository.save(mp3File);
-
+        String mimeType = new Tika().detect(mp3content);
+        if (!"audio/mpeg".equals(mimeType)) {
+            throw new MP3FileUnparsableException();
+        }
         BodyContentHandler handler = new BodyContentHandler();
         Metadata metadata = new Metadata();
         ParseContext parseContext = new ParseContext();
@@ -39,8 +44,13 @@ public class MP3StorageService {
             Arrays.stream(metadataNames)
                     .forEach(name -> System.out.println(metadata.get(name)));
         } catch (IOException | SAXException | TikaException exception) {
-            throw new RuntimeException(exception);
+            logger.error(exception.getMessage(), exception);
+            throw new MP3FileUnparsableException();
         }
+
+        MP3File mp3File = new MP3File();
+        mp3File.setByteContent(mp3content);
+        MP3File savedMP3File = mp3FileRepository.save(mp3File);
 
         return savedMP3File.getId();
     }

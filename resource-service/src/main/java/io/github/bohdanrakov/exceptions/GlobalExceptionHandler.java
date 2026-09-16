@@ -22,4 +22,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse("Invalid file format: " + contentTypeHeader
                 + ". Only MP3 files are allowed"), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(MP3FileUnparsableException.class)
+    public ResponseEntity<ErrorResponse> unparsableMP3FileException() {
+        return new ResponseEntity<>(new ErrorResponse("Invalid MP3 file in the request body"), HttpStatus.BAD_REQUEST);
+    }
 }
