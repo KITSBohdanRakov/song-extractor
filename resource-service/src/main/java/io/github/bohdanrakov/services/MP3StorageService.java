@@ -1,6 +1,7 @@
 package io.github.bohdanrakov.services;
 
 import io.github.bohdanrakov.dtos.MP3FileDTO;
+import io.github.bohdanrakov.exceptions.InvalidIdException;
 import io.github.bohdanrakov.exceptions.MP3FileNotFoundException;
 import io.github.bohdanrakov.exceptions.MP3FileUnparsableException;
 import io.github.bohdanrakov.mappers.MP3FileMapper;
@@ -37,7 +38,7 @@ public class MP3StorageService {
     public Long storeMP3File(byte[] mp3content) {
         String mimeType = new Tika().detect(mp3content);
         if (!"audio/mpeg".equals(mimeType)) {
-            throw new MP3FileUnparsableException();
+            throw new MP3FileUnparsableException("The request body is invalid MP3. Only MP3 files are allowed");
         }
         BodyContentHandler handler = new BodyContentHandler();
         Metadata metadata = new Metadata();
@@ -51,7 +52,7 @@ public class MP3StorageService {
                     .forEach(name -> System.out.println(metadata.get(name)));
         } catch (IOException | SAXException | TikaException exception) {
             logger.error(exception.getMessage(), exception);
-            throw new MP3FileUnparsableException();
+            throw new MP3FileUnparsableException("The request body is invalid MP3. Only MP3 files are allowed");
         }
 
         MP3File mp3File = new MP3File();
@@ -62,9 +63,12 @@ public class MP3StorageService {
     }
 
     public MP3FileDTO getMP3File(long id) {
+        if (id <= 0) {
+            throw new InvalidIdException("Invalid value '" + id + "' for ID. Must be a positive integer");
+        }
         Optional<MP3File> mp3File = mp3FileRepository.findById(id);
         if (mp3File.isEmpty()) {
-            throw new MP3FileNotFoundException(id);
+            throw new MP3FileNotFoundException("Resource with ID=" + id + " not found");
         }
         return mp3FileMapper.toDto(mp3File.get());
     }

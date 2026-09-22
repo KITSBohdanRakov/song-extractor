@@ -25,15 +25,23 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MP3FileUnparsableException.class)
-    public ResponseEntity<ErrorResponse> unparsableMP3FileException() {
-        return new ResponseEntity<>(new ErrorResponse("Invalid MP3 file in the request body",
-                String.valueOf(HttpStatus.BAD_REQUEST.value())),
+    public ResponseEntity<ErrorResponse> unparsableMP3FileException(MP3FileUnparsableException ex) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(),
+                Integer.toString(HttpStatus.BAD_REQUEST.value())),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MP3FileNotFoundException.class)
     public ResponseEntity<ErrorResponse> mp3FileNotFoundException(MP3FileNotFoundException ex) {
-        return new ResponseEntity<>(new ErrorResponse("Resource with ID=" + ex.getMp3FileId()
-                + " not found", String.valueOf(HttpStatus.NOT_FOUND.value())), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(),
+                Integer.toString(HttpStatus.NOT_FOUND.value())),
+                HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidIdException.class)
+    public ResponseEntity<ErrorResponse> invalidIdException(InvalidIdException ex) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(),
+                Integer.toString(HttpStatus.BAD_REQUEST.value())),
+                HttpStatus.BAD_REQUEST);
     }
 }
