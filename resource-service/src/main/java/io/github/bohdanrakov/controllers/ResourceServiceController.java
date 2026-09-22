@@ -1,15 +1,16 @@
 package io.github.bohdanrakov.controllers;
 
+import io.github.bohdanrakov.dtos.MP3FileDTO;
 import io.github.bohdanrakov.dtos.MP3StoreRequest;
 import io.github.bohdanrakov.dtos.MP3StoreResponse;
 import io.github.bohdanrakov.services.MP3StorageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Validated
 public class ResourceServiceController {
 
     private final MP3StorageService mp3StorageService;
@@ -24,5 +25,13 @@ public class ResourceServiceController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new MP3StoreResponse(storedFileId));
+    }
+
+    @GetMapping("/resources/{id}")
+    public ResponseEntity<byte[]> getResource(@PathVariable Long id) {
+        MP3FileDTO mp3File = mp3StorageService.getMP3File(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(mp3File.byteContent());
     }
 }

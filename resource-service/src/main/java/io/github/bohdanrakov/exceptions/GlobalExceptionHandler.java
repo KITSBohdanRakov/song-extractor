@@ -20,11 +20,20 @@ public class GlobalExceptionHandler {
             contentTypeHeader = "No content type";
         }
         return new ResponseEntity<>(new ErrorResponse("Invalid file format: " + contentTypeHeader
-                + ". Only MP3 files are allowed"), HttpStatus.BAD_REQUEST);
+                + ". Only MP3 files are allowed", String.valueOf(HttpStatus.BAD_REQUEST.value())),
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MP3FileUnparsableException.class)
     public ResponseEntity<ErrorResponse> unparsableMP3FileException() {
-        return new ResponseEntity<>(new ErrorResponse("Invalid MP3 file in the request body"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse("Invalid MP3 file in the request body",
+                String.valueOf(HttpStatus.BAD_REQUEST.value())),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MP3FileNotFoundException.class)
+    public ResponseEntity<ErrorResponse> mp3FileNotFoundException(MP3FileNotFoundException ex) {
+        return new ResponseEntity<>(new ErrorResponse("Resource with ID=" + ex.getMp3FileId()
+                + " not found", String.valueOf(HttpStatus.NOT_FOUND.value())), HttpStatus.NOT_FOUND);
     }
 }

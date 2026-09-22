@@ -1,6 +1,9 @@
 package io.github.bohdanrakov.services;
 
+import io.github.bohdanrakov.dtos.MP3FileDTO;
+import io.github.bohdanrakov.exceptions.MP3FileNotFoundException;
 import io.github.bohdanrakov.exceptions.MP3FileUnparsableException;
+import io.github.bohdanrakov.mappers.MP3FileMapper;
 import io.github.bohdanrakov.models.MP3File;
 import io.github.bohdanrakov.repositories.MP3FileRepository;
 import org.apache.tika.Tika;
@@ -17,15 +20,18 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Optional;
 
 @Service
 public class MP3StorageService {
 
     private final MP3FileRepository mp3FileRepository;
+    private final MP3FileMapper mp3FileMapper;
     private static final Logger logger = LoggerFactory.getLogger(MP3StorageService.class);
 
-    public MP3StorageService(MP3FileRepository mp3FileRepository) {
+    public MP3StorageService(MP3FileRepository mp3FileRepository, MP3FileMapper mp3FileMapper) {
         this.mp3FileRepository = mp3FileRepository;
+        this.mp3FileMapper = mp3FileMapper;
     }
 
     public Long storeMP3File(byte[] mp3content) {
@@ -53,5 +59,13 @@ public class MP3StorageService {
         MP3File savedMP3File = mp3FileRepository.save(mp3File);
 
         return savedMP3File.getId();
+    }
+
+    public MP3FileDTO getMP3File(long id) {
+        Optional<MP3File> mp3File = mp3FileRepository.findById(id);
+        if (mp3File.isEmpty()) {
+            throw new MP3FileNotFoundException(id);
+        }
+        return mp3FileMapper.toDto(mp3File.get());
     }
 }
