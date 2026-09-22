@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -24,24 +25,32 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> invalidIdType(MethodArgumentTypeMismatchException ex) {
+        return new ResponseEntity<>(
+                new ErrorResponse("Invalid value '" + ex.getValue() + "' for ID. Must be a positive integer",
+                        Integer.toString(HttpStatus.BAD_REQUEST.value())),
+                HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(MP3FileUnparsableException.class)
     public ResponseEntity<ErrorResponse> unparsableMP3FileException(MP3FileUnparsableException ex) {
-        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(),
-                Integer.toString(HttpStatus.BAD_REQUEST.value())),
+        return new ResponseEntity<>(
+                new ErrorResponse(ex.getMessage(), Integer.toString(HttpStatus.BAD_REQUEST.value())),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MP3FileNotFoundException.class)
     public ResponseEntity<ErrorResponse> mp3FileNotFoundException(MP3FileNotFoundException ex) {
-        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(),
-                Integer.toString(HttpStatus.NOT_FOUND.value())),
+        return new ResponseEntity<>(
+                new ErrorResponse(ex.getMessage(), Integer.toString(HttpStatus.NOT_FOUND.value())),
                 HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidIdException.class)
     public ResponseEntity<ErrorResponse> invalidIdException(InvalidIdException ex) {
-        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(),
-                Integer.toString(HttpStatus.BAD_REQUEST.value())),
+        return new ResponseEntity<>(
+                new ErrorResponse(ex.getMessage(), Integer.toString(HttpStatus.BAD_REQUEST.value())),
                 HttpStatus.BAD_REQUEST);
     }
 }
