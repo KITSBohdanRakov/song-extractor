@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @Validated
 public class ResourceServiceController {
@@ -35,5 +38,13 @@ public class ResourceServiceController {
                 .status(HttpStatus.OK)
                 .header(HttpHeaders.CONTENT_TYPE, "audio/mpeg")
                 .body(mp3File.byteContent());
+    }
+
+    @DeleteMapping("/resources")
+    public ResponseEntity<Map<String, List<Long>>> deleteResources(@RequestParam("id") String ids) {
+        List<Long> deletedIds = mp3StorageService.deleteMP3FilesById(ids);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(Map.of("ids", deletedIds));
     }
 }
