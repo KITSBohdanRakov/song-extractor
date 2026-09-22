@@ -1,7 +1,9 @@
 package io.github.bohdanrakov.exceptions;
 
-public class MP3FileNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class MP3FileNotFoundException extends APIException {
     public MP3FileNotFoundException(String message) {
-        super(message);
+        super(message, HttpStatus.NOT_FOUND);
     }
 }

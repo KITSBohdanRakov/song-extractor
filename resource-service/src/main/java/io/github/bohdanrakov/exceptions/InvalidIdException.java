@@ -1,7 +1,9 @@
 package io.github.bohdanrakov.exceptions;
 
-public class InvalidIdException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class InvalidIdException extends APIException {
     public InvalidIdException(String message) {
-        super(message);
+        super(message, HttpStatus.BAD_REQUEST);
     }
 }
