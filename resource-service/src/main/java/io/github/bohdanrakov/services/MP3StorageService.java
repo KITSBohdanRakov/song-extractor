@@ -1,11 +1,13 @@
 package io.github.bohdanrakov.services;
 
 import io.github.bohdanrakov.dtos.MP3FileDTO;
+import io.github.bohdanrakov.dtos.SongServiceStoreRequest;
 import io.github.bohdanrakov.exceptions.IdListTooLargeException;
 import io.github.bohdanrakov.exceptions.InvalidIdException;
 import io.github.bohdanrakov.exceptions.MP3FileNotFoundException;
 import io.github.bohdanrakov.exceptions.MP3FileUnparsableException;
 import io.github.bohdanrakov.mappers.MP3FileMapper;
+import io.github.bohdanrakov.mappers.TikaMetadataSongRequestMapper;
 import io.github.bohdanrakov.models.MP3File;
 import io.github.bohdanrakov.repositories.MP3FileRepository;
 import org.apache.tika.Tika;
@@ -23,23 +25,43 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class MP3StorageService {
 
-    private final MP3FileRepository mp3FileRepository;
-    private final MP3FileMapper mp3FileMapper;
     private static final Logger logger = LoggerFactory.getLogger(MP3StorageService.class);
 
-    public MP3StorageService(MP3FileRepository mp3FileRepository, MP3FileMapper mp3FileMapper) {
+    private final MP3FileRepository mp3FileRepository;
+    private final MP3FileMapper mp3FileMapper;
+    private final TikaMetadataSongRequestMapper tikaMetadataSongRequestMapper;
+    private final SongServiceCallerService songServiceCallerService;
+
+    public MP3StorageService(MP3FileRepository mp3FileRepository, MP3FileMapper mp3FileMapper,
+                             TikaMetadataSongRequestMapper tikaMetadataSongRequestMapper,
+                             SongServiceCallerService songServiceCallerService) {
         this.mp3FileRepository = mp3FileRepository;
         this.mp3FileMapper = mp3FileMapper;
+        this.tikaMetadataSongRequestMapper = tikaMetadataSongRequestMapper;
+        this.songServiceCallerService = songServiceCallerService;
     }
 
     public Long storeMP3File(byte[] mp3content) {
+        Metadata metadata = extractMetadata(mp3content);
+
+        MP3File mp3File = new MP3File();
+        mp3File.setByteContent(mp3content);
+        MP3File savedMP3File = mp3FileRepository.save(mp3File);
+
+        SongServiceStoreRequest songRequest = tikaMetadataSongRequestMapper.toSongRequest(metadata,
+                savedMP3File.getId());
+        songServiceCallerService.uploadSongMetadata(songRequest);
+
+        return savedMP3File.getId();
+    }
+
+    private static Metadata extractMetadata(byte[] mp3content) {
         String mimeType = new Tika().detect(mp3content);
         if (!"audio/mpeg".equals(mimeType)) {
             throw new MP3FileUnparsableException("The request body is invalid MP3. Only MP3 files are allowed");
@@ -51,19 +73,11 @@ public class MP3StorageService {
         Mp3Parser Mp3Parser = new Mp3Parser();
         try (TikaInputStream inputStream = TikaInputStream.get(mp3content)) {
             Mp3Parser.parse(inputStream, handler, metadata, parseContext);
-            String[] metadataNames = metadata.names();
-            Arrays.stream(metadataNames)
-                    .forEach(name -> System.out.println(metadata.get(name)));
         } catch (IOException | SAXException | TikaException exception) {
             logger.error(exception.getMessage(), exception);
             throw new MP3FileUnparsableException("The request body is invalid MP3. Only MP3 files are allowed");
         }
-
-        MP3File mp3File = new MP3File();
-        mp3File.setByteContent(mp3content);
-        MP3File savedMP3File = mp3FileRepository.save(mp3File);
-
-        return savedMP3File.getId();
+        return metadata;
     }
 
     public MP3FileDTO getMP3File(long id) {
