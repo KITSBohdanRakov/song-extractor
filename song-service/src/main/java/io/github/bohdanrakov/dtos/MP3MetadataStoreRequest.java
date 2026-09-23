@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record MP3MetadataStoreRequest(
-        Integer id,
+        Long id,
 
         @NotNull(message = "Song name is required")
         @Size(min = 1, max = 100, message = "Song name must be between 1 and 100 characters")

@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SongMetadataRepository extends JpaRepository<MP3Metadata, Integer> {
+public interface SongMetadataRepository extends JpaRepository<MP3Metadata, Long> {
 
     @Query("SELECT m.id FROM MP3Metadata m WHERE m.id IN :requestIds")
-    List<Integer> findExistingIds(List<Long> requestIds);
+    List<Long> findExistingIds(List<Long> requestIds);
 }

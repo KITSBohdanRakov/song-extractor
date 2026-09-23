@@ -33,7 +33,7 @@ public class MetadataStorageService {
     }
 
     @Transactional
-    public Integer storeMP3Metadata(MP3MetadataStoreRequest mp3MetadataStoreRequest) {
+    public Long storeMP3Metadata(MP3MetadataStoreRequest mp3MetadataStoreRequest) {
 
         MP3Metadata mp3Metadata = mp3RequestToMetadataMapper.toEntity(mp3MetadataStoreRequest);
         if (songMetadataRepository.existsById(mp3Metadata.getId())) {
@@ -45,7 +45,7 @@ public class MetadataStorageService {
         return savedMP3Metadata.getId();
     }
 
-    public MP3MetadataResponse getMP3Metadata(Integer id) {
+    public MP3MetadataResponse getMP3Metadata(Long id) {
         if (id <= 0) {
             throw new InvalidIdException("Invalid value '" + id + "' for ID. Must be a positive integer");
         }
@@ -59,7 +59,7 @@ public class MetadataStorageService {
     }
 
     @Transactional
-    public List<Integer> deleteMP3MetadataByIds(String ids) {
+    public List<Long> deleteMP3MetadataByIds(String ids) {
         if (ids.length() > 200) {
             throw new IdListTooLargeException("CSV string is too long: received " + ids.length()
                     + " characters, maximum allowed is 200");
@@ -74,7 +74,7 @@ public class MetadataStorageService {
             parsedIds.add(Long.parseLong(id));
         }
 
-        List<Integer> idsToDelete = songMetadataRepository.findExistingIds(parsedIds);
+        List<Long> idsToDelete = songMetadataRepository.findExistingIds(parsedIds);
         songMetadataRepository.deleteAllById(idsToDelete);
         return idsToDelete;
 

@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 @Table(name = "mp3_metadata")
 public class MP3Metadata {
     @Id
-    private Integer id;
+    private Long id;
 
     @Column(length = 100)
     private String name;
@@ -23,11 +23,11 @@ public class MP3Metadata {
     @Column
     private Short year;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

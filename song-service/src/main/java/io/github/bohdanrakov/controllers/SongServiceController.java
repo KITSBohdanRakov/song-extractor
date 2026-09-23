@@ -21,17 +21,17 @@ public class SongServiceController {
     }
 
     @PostMapping("/songs")
-    public ResponseEntity<Map<String, Integer>> storeMP3Metadata(
+    public ResponseEntity<Map<String, Long>> storeMP3Metadata(
             @Valid @RequestBody MP3MetadataStoreRequest mp3MetadataStoreRequest) {
 
-        Integer id = metadataStorageService.storeMP3Metadata(mp3MetadataStoreRequest);
+        Long id = metadataStorageService.storeMP3Metadata(mp3MetadataStoreRequest);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Map.of("id", id));
     }
 
     @GetMapping("/songs/{id}")
-    public ResponseEntity<MP3MetadataResponse> getMP3Metadata(@PathVariable Integer id) {
+    public ResponseEntity<MP3MetadataResponse> getMP3Metadata(@PathVariable Long id) {
 
         MP3MetadataResponse mp3Metadata = metadataStorageService.getMP3Metadata(id);
 
@@ -40,8 +40,8 @@ public class SongServiceController {
     }
 
     @DeleteMapping("/songs")
-    public ResponseEntity<Map<String, List<Integer>>> deleteMP3Metadata(@RequestParam("id") String ids) {
-        List<Integer> deletedIds = metadataStorageService.deleteMP3MetadataByIds(ids);
+    public ResponseEntity<Map<String, List<Long>>> deleteMP3Metadata(@RequestParam("id") String ids) {
+        List<Long> deletedIds = metadataStorageService.deleteMP3MetadataByIds(ids);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Map.of("ids", deletedIds));
     }
