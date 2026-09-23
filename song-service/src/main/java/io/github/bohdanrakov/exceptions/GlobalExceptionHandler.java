@@ -8,6 +8,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,5 +33,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 new ErrorResponse(ex.getMessage(), Integer.toString(ex.getHttpStatus().value())),
                 ex.getHttpStatus());
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> invalidIdType(MethodArgumentTypeMismatchException ex) {
+        return new ResponseEntity<>(
+                new ErrorResponse("Invalid value '" + ex.getValue() + "' for ID. Must be a positive integer",
+                        Integer.toString(HttpStatus.BAD_REQUEST.value())),
+                HttpStatus.BAD_REQUEST);
     }
 }

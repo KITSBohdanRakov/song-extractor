@@ -11,7 +11,6 @@ import org.mapstruct.Named;
 public interface MP3RequestToMetadataMapper {
 
     @Mapping(target = "duration", source = "duration", qualifiedByName = "durationToShort")
-    @Mapping(target = "year", source = "year", qualifiedByName = "yearToShort")
     MP3Metadata toEntity(MP3MetadataStoreRequest mp3MetadataStoreRequest);
 
     @Named("durationToShort")
@@ -20,10 +19,5 @@ public interface MP3RequestToMetadataMapper {
         int minutes = Integer.parseInt(minutesAndSeconds[0]);
         int seconds = Integer.parseInt(minutesAndSeconds[1]);
         return (short) (minutes * 60 + seconds);
-    }
-
-    @Named("yearToShort")
-    default Short yearStringToShort(String year) {
-        return Short.parseShort(year);
     }
 }

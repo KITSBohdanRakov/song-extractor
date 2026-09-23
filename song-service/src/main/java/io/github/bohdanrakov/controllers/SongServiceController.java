@@ -1,13 +1,12 @@
 package io.github.bohdanrakov.controllers;
 
+import io.github.bohdanrakov.dtos.MP3MetadataResponse;
 import io.github.bohdanrakov.dtos.MP3MetadataStoreRequest;
 import io.github.bohdanrakov.services.MetadataStorageService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -28,6 +27,15 @@ public class SongServiceController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Map.of("id", id));
+    }
+
+    @GetMapping("/songs/{id}")
+    public ResponseEntity<MP3MetadataResponse> getMP3Metadata(@PathVariable Integer id) {
+
+        MP3MetadataResponse mp3Metadata = metadataStorageService.getMP3Metadata(id);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(mp3Metadata);
     }
 
 }
