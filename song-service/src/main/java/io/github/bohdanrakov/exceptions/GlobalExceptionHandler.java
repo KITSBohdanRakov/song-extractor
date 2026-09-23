@@ -1,5 +1,6 @@
 package io.github.bohdanrakov.exceptions;
 
+import io.github.bohdanrakov.dtos.ErrorResponse;
 import io.github.bohdanrakov.dtos.ValidationErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +25,12 @@ public class GlobalExceptionHandler {
                 new ValidationErrorResponse("Validation error", errorDetails,
                         Integer.toString(HttpStatus.BAD_REQUEST.value())),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(APIException.class)
+    public ResponseEntity<ErrorResponse> handleApiException(APIException ex) {
+        return new ResponseEntity<>(
+                new ErrorResponse(ex.getMessage(), Integer.toString(ex.getHttpStatus().value())),
+                ex.getHttpStatus());
     }
 }
