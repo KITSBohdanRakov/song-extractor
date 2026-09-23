@@ -109,6 +109,7 @@ public class MP3StorageService {
 
         List<Long> idsForDeletion = mp3FileRepository.findExistingIds(parsedIds);
         mp3FileRepository.deleteAllById(idsForDeletion);
+        songServiceCallerService.deleteSongMetadata(idsForDeletion);
         return idsForDeletion;
     }
 
