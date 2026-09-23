@@ -11,4 +11,10 @@
     <artifactId>song-service</artifactId>
     <name>song-service</name>
     <description>song-service</description>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+    </dependencies>
 </project>
