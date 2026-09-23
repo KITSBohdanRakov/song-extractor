@@ -42,4 +42,12 @@ public class GlobalExceptionHandler {
                         Integer.toString(HttpStatus.BAD_REQUEST.value())),
                 HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> customInternalServerError(Exception ex) {
+        return new ResponseEntity<>(
+                new ErrorResponse("Internal server error",
+                        Integer.toString(HttpStatus.INTERNAL_SERVER_ERROR.value())),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

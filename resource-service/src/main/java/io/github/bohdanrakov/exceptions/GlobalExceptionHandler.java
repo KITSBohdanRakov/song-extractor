@@ -39,4 +39,12 @@ public class GlobalExceptionHandler {
                 new ErrorResponse(ex.getMessage(), Integer.toString(ex.getHttpStatus().value())),
                 ex.getHttpStatus());
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> customInternalServerError(Exception ex) {
+        return new ResponseEntity<>(
+                new ErrorResponse("Internal server error",
+                        Integer.toString(HttpStatus.INTERNAL_SERVER_ERROR.value())),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
