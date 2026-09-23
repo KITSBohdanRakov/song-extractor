@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -36,6 +37,13 @@ public class SongServiceController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(mp3Metadata);
+    }
+
+    @DeleteMapping("/songs")
+    public ResponseEntity<Map<String, List<Integer>>> deleteMP3Metadata(@RequestParam("id") String ids) {
+        List<Integer> deletedIds = metadataStorageService.deleteMP3MetadataByIds(ids);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("ids", deletedIds));
     }
 
 }

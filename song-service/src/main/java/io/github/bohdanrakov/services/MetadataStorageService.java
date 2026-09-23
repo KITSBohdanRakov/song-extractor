@@ -3,6 +3,7 @@ package io.github.bohdanrakov.services;
 import io.github.bohdanrakov.SongMetadataRepository;
 import io.github.bohdanrakov.dtos.MP3MetadataResponse;
 import io.github.bohdanrakov.dtos.MP3MetadataStoreRequest;
+import io.github.bohdanrakov.exceptions.IdListTooLargeException;
 import io.github.bohdanrakov.exceptions.InvalidIdException;
 import io.github.bohdanrakov.exceptions.MP3MetadataNotFoundException;
 import io.github.bohdanrakov.exceptions.MetadataAlreadyExistsException;
@@ -12,6 +13,8 @@ import io.github.bohdanrakov.models.MP3Metadata;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -53,6 +56,37 @@ public class MetadataStorageService {
         }
 
         return mp3MetadataToResponseMapper.toDto(mp3Metadata.get());
+    }
+
+    @Transactional
+    public List<Integer> deleteMP3MetadataByIds(String ids) {
+        if (ids.length() > 200) {
+            throw new IdListTooLargeException("CSV string is too long: received " + ids.length()
+                    + " characters, maximum allowed is 200");
+        }
+
+        List<Long> parsedIds = new ArrayList<>();
+
+        for (String id : ids.split(",")) {
+            if (!isValidLong(id)) {
+                throw new InvalidIdException("Invalid ID format: '" + id + "'. Only positive integers are allowed");
+            }
+            parsedIds.add(Long.parseLong(id));
+        }
+
+        List<Integer> idsToDelete = songMetadataRepository.findExistingIds(parsedIds);
+        songMetadataRepository.deleteAllById(idsToDelete);
+        return idsToDelete;
+
+    }
+
+    private boolean isValidLong(String number) {
+        for (int i = 0; i < number.length(); i++) {
+            if(!Character.isDigit(number.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

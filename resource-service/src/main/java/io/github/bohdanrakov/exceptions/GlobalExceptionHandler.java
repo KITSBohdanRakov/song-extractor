@@ -3,6 +3,8 @@ package io.github.bohdanrakov.exceptions;
 
 import io.github.bohdanrakov.dtos.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ResponseEntity<ErrorResponse> unsupportedMediaType(HttpServletRequest request) {
@@ -42,6 +46,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> customInternalServerError(Exception ex) {
+        logger.error("Internal server error", ex);
         return new ResponseEntity<>(
                 new ErrorResponse("Internal server error",
                         Integer.toString(HttpStatus.INTERNAL_SERVER_ERROR.value())),
