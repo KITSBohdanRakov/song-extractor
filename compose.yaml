@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: postgres  # Default, can be omitted if unchanged
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"  # Maps container port 5432 to host port 5432
+      - "5434:5432"  # Maps container port 5432 to host port 5432
 
   song-db:
     image: postgres:17-alpine
