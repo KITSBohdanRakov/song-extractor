@@ -36,6 +36,8 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - "5434:5432"
+    volumes:
+      - ./init-scripts/resource-db/:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD", "pg_isready", "-h", "localhost", "-U", "postgres", "-d", "resource-db"]
       interval: 5s
@@ -51,6 +53,8 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - "5433:5432"
+    volumes:
+      - ./init-scripts/song-db/:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD", "pg_isready", "-h", "localhost", "-U", "postgres", "-d", "song-db"]
       interval: 5s
