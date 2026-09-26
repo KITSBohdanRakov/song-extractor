@@ -1,6 +1,6 @@
 package io.github.bohdanrakov.services;
 
-import io.github.bohdanrakov.SongMetadataRepository;
+import io.github.bohdanrakov.repositories.SongMetadataRepository;
 import io.github.bohdanrakov.dtos.MP3MetadataResponse;
 import io.github.bohdanrakov.dtos.MP3MetadataStoreRequest;
 import io.github.bohdanrakov.exceptions.IdListTooLargeException;

@@ -32,6 +32,7 @@ public class SongServiceCallerService {
                     .toBodilessEntity();
         } catch (RestClientException ex) {
             logger.error("Failed to call song-service store metadata", ex);
+            throw ex;
         }
     }
 
@@ -54,6 +55,7 @@ public class SongServiceCallerService {
                     .toBodilessEntity();
         } catch (RestClientException ex) {
             logger.error("Failed to call song-service delete metadata", ex);
+            throw ex;
         }
     }
 }

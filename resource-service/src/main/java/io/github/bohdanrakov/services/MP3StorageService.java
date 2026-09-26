@@ -47,6 +47,7 @@ public class MP3StorageService {
         this.songServiceCallerService = songServiceCallerService;
     }
 
+    @Transactional
     public Long storeMP3File(byte[] mp3content) {
         Metadata metadata = extractMetadata(mp3content);
 

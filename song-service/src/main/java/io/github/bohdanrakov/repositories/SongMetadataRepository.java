@@ -1,4 +1,4 @@
-package io.github.bohdanrakov;
+package io.github.bohdanrakov.repositories;
 
 import io.github.bohdanrakov.models.MP3Metadata;
 import org.springframework.data.jpa.repository.JpaRepository;
