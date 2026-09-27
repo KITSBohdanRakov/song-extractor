@@ -10,6 +10,8 @@ import io.github.bohdanrakov.exceptions.MetadataAlreadyExistsException;
 import io.github.bohdanrakov.mappers.MP3MetadataToResponseMapper;
 import io.github.bohdanrakov.mappers.MP3RequestToMetadataMapper;
 import io.github.bohdanrakov.models.MP3Metadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ import java.util.Optional;
 @Service
 public class MetadataStorageService {
 
+    private static final Logger logger = LoggerFactory.getLogger(MetadataStorageService.class);
     private final SongMetadataRepository songMetadataRepository;
     private final MP3RequestToMetadataMapper mp3RequestToMetadataMapper;
     private final MP3MetadataToResponseMapper mp3MetadataToResponseMapper;
@@ -34,7 +37,7 @@ public class MetadataStorageService {
 
     @Transactional
     public Long storeMP3Metadata(MP3MetadataStoreRequest mp3MetadataStoreRequest) {
-
+        logger.info("Storing metadata");
         MP3Metadata mp3Metadata = mp3RequestToMetadataMapper.toEntity(mp3MetadataStoreRequest);
         if (songMetadataRepository.existsById(mp3Metadata.getId())) {
             throw new MetadataAlreadyExistsException("Metadata for resource ID=" + mp3Metadata.getId()
@@ -60,6 +63,7 @@ public class MetadataStorageService {
 
     @Transactional
     public List<Long> deleteMP3MetadataByIds(String ids) {
+        logger.info("Deleting metadata");
         if (ids.length() > 200) {
             throw new IdListTooLargeException("CSV string is too long: received " + ids.length()
                     + " characters, maximum allowed is 200");

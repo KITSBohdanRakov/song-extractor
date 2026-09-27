@@ -18,8 +18,10 @@ services:
     build:
       context: ./song-service
       dockerfile: Dockerfile
+    deploy:
+      replicas: 2
     ports:
-      - "8082:8082"
+      - "8082-8083:8082"
     environment:
       SPRING_DATASOURCE_URL: ${SONG_DB_URL}
       SPRING_DATASOURCE_USERNAME: ${SONG_DB_USERNAME}
@@ -28,6 +30,13 @@ services:
     depends_on:
       song-db:
         condition: service_healthy
+
+  eureka-discovery-service:
+    build:
+      context: ./eureka-discovery-service
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
 
   resource-db:
     image: postgres:17-alpine
