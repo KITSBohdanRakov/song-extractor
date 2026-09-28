@@ -38,6 +38,15 @@ services:
     ports:
       - "8761:8761"
 
+  api-gateway-service:
+    build:
+      context: ./api-gateway-service
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      EUREKA_DISCOVERY_SERVICE_URL: ${EUREKA_SERVICE_URL}
+
   resource-db:
     image: postgres:17-alpine
     environment:
